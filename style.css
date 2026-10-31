@@ -1,0 +1,317 @@
+:root {
+  --bg: #14172e;
+  --card-bg: #23284d;
+  --text: #f4f4fb;
+  --accent: #ffd23f;
+  --accent-dark: #3a2c00;
+  --ripple: #7df9ff;
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+  /* No text selection, long-press menus, or double-tap zoom anywhere. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: none;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+
+[hidden] { display: none !important; }
+
+/* ---------- tap feedback ---------- */
+
+.tappable { transition: transform 90ms ease-out, filter 90ms ease-out; }
+.tappable:active { transform: scale(0.93); filter: brightness(1.3); }
+
+.ripple {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  border-radius: 50%;
+  border: 10px solid var(--ripple);
+  pointer-events: none;
+  z-index: 1000;
+  animation: ripple 600ms ease-out forwards;
+}
+@keyframes ripple {
+  from { transform: scale(0.3); opacity: 1; }
+  to   { transform: scale(3.5); opacity: 0; }
+}
+
+/* ---------- home ---------- */
+
+#home-view {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px;
+}
+
+#home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+}
+
+.card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 6px solid transparent;
+}
+
+.thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.duration {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.title {
+  /* Bottom spacing is a margin, not padding: clamped lines would show through padding. */
+  padding: 10px 12px 0;
+  margin-bottom: 12px;
+  font-size: 16px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------- player ---------- */
+
+/* Sits on top of the home view instead of replacing it so the home list keeps its scroll position. */
+#player-view {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+}
+
+#back-button {
+  justify-self: start;
+  margin: 16px;
+  width: 118px;
+  height: 118px;
+  border-radius: 28px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 0 #b8901a;
+}
+#back-button:active {
+  transform: scale(0.88) translateY(4px);
+  box-shadow: 0 2px 0 #b8901a;
+  background: #fff;
+}
+#back-button svg {
+  width: 76px;
+  height: 76px;
+  fill: none;
+  stroke: var(--accent-dark);
+  stroke-width: 3.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#player-box {
+  position: relative;
+  min-height: 0;
+}
+#player-box iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+#shield {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* The shield itself shouldn't shrink on tap; only the ripple shows. */
+#shield:active { transform: none; filter: none; }
+
+#shield-icon {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55) center / 70px no-repeat;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+#shield-icon.play {
+  opacity: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M7 4.5v15l12.5-7.5z'/%3E%3C/svg%3E");
+}
+
+#scrubber {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  background: var(--bg);
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Much taller than the visible track so it's easy to grab. */
+#scrub-area {
+  position: relative;
+  flex: 1;
+  height: 84px;
+  /* Room for the knob to hang past either end of the track without covering the times. */
+  margin: 0 24px;
+  touch-action: none;
+  cursor: pointer;
+}
+#scrub-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 14px;
+  margin-top: -7px;
+  border-radius: 7px;
+  background: var(--card-bg);
+  overflow: hidden;
+}
+#scrub-fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+}
+#scrub-knob {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 5px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition: transform 120ms ease-out;
+  pointer-events: none;
+}
+#scrub-area.active #scrub-knob {
+  transform: scale(1.5);
+  background: #fff;
+}
+
+#strip {
+  display: flex;
+  cursor: grab;
+  gap: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 12px 16px 16px;
+  background: var(--bg);
+  -webkit-overflow-scrolling: touch;
+}
+#strip .card {
+  flex: 0 0 300px;
+}
+#strip .title { display: none; }
+#strip .card.current { border-color: var(--accent); }
+
+/* ---------- loading / error / toast ---------- */
+
+#loading-view, #error-view {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  z-index: 50;
+}
+
+.spinner {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 12px solid var(--card-bg);
+  border-top-color: var(--accent);
+  animation: spin 900ms linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-box {
+  max-width: 640px;
+  margin: 16px;
+  padding: 28px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  font-size: 18px;
+  user-select: text;
+  -webkit-user-select: text;
+}
+#error-message { white-space: pre-wrap; margin-top: 0; }
+.error-box button {
+  background: var(--accent);
+  color: var(--accent-dark);
+  font-weight: 700;
+  font-size: 22px;
+  padding: 14px 28px;
+  border-radius: 14px;
+}
+
+#toast {
+  position: fixed;
+  left: 50%;
+  top: 24px;
+  transform: translateX(-50%);
+  background: #c0392b;
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-size: 18px;
+  font-weight: 600;
+  z-index: 60;
+}

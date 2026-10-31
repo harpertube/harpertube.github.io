@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<!-- YouTube embeds refuse to play (error 153) without a referrer -->
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#14172e">
+<title>HarperTube</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main id="home-view">
+  <div id="home-grid"></div>
+</main>
+
+<section id="player-view" hidden>
+  <button id="back-button" class="tappable" aria-label="Back">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 4 7.5 12l8 8" /></svg>
+  </button>
+  <div id="player-box">
+    <div id="player"></div>
+    <!-- Covers the YouTube iframe so taps can't reach YouTube's own links (channel name, logo, end screen). -->
+    <div id="shield" class="tappable">
+      <div id="shield-icon"></div>
+    </div>
+  </div>
+  <div id="scrubber">
+    <span id="time-current">0:00</span>
+    <div id="scrub-area">
+      <div id="scrub-track"><div id="scrub-fill"></div></div>
+      <div id="scrub-knob"></div>
+    </div>
+    <span id="time-total">0:00</span>
+  </div>
+  <div id="strip"></div>
+</section>
+
+<div id="loading-view">
+  <div class="spinner"></div>
+</div>
+
+<div id="error-view" hidden>
+  <div class="error-box">
+    <p id="error-message"></p>
+    <button class="tappable" onclick="location.reload()">Try again</button>
+  </div>
+</div>
+
+<div id="toast" hidden></div>
+
+<script src="app.js"></script>
+<script src="https://www.youtube.com/iframe_api" onerror="showFatal('Could not load the YouTube player. Is the tablet online?')"></script>
+</body>
+</html>
