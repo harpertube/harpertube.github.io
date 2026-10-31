@@ -202,6 +202,7 @@ async function playIndex(index) {
   for (const [i, card] of stripCards.entries()) card.classList.toggle("current", i === index);
   stripCards[index].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   setShieldIcon(false);
+  pendingSeek = null;
   setProgress(0, 0);
 
   if (player) {
@@ -259,9 +260,27 @@ function setProgress(seconds, duration) {
   $("time-total").textContent = formatDuration(Math.floor(duration));
 }
 
+// After a scrub is released, the player keeps reporting the old time until the
+// seek has loaded, which would snap the knob back. Until then, the knob stays
+// where it was dropped.
+const SEEK_LANDED_TOLERANCE_S = 2;
+// Gives up holding the knob if the seek still hasn't landed after this long.
+const SEEK_HOLD_MAX_MS = 15000;
+let pendingSeek = null;
+
 function updateProgress() {
   if (!playerReady || scrubbing || $("player-view").hidden) return;
-  setProgress(player.getCurrentTime(), player.getDuration());
+  const seconds = player.getCurrentTime();
+  const duration = player.getDuration();
+  if (pendingSeek) {
+    const landed = Math.abs(seconds - pendingSeek.seconds) <= SEEK_LANDED_TOLERANCE_S;
+    if (!landed && performance.now() < pendingSeek.deadline) {
+      setProgress(pendingSeek.seconds, duration);
+      return;
+    }
+    pendingSeek = null;
+  }
+  setProgress(seconds, duration);
 }
 
 // While dragging, the video is paused and seeked to the finger position, so
@@ -304,6 +323,7 @@ function wireScrubber() {
     if (!scrubbing) return;
     scrubbing = false;
     area.classList.remove("active");
+    pendingSeek = { seconds: scrubSeconds, deadline: performance.now() + SEEK_HOLD_MAX_MS };
     player.seekTo(scrubSeconds, true);
     player.playVideo();
   };
