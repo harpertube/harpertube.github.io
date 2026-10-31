@@ -211,6 +211,11 @@ async function playIndex(index) {
   }
   await ytReady;
   player = new YT.Player("player", {
+    // The privacy-enhanced domain doesn't get the browser's youtube.com sign-in
+    // cookies. When the browser is signed in to a supervised (Family Link)
+    // account, youtube.com refuses to play videos ("try watching this video in
+    // YouTube Kids").
+    host: "https://www.youtube-nocookie.com",
     width: "100%",
     height: "100%",
     videoId: video.id,
