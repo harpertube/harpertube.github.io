@@ -8,13 +8,13 @@ A simple YouTube player for Harper:
 - The video is covered by a tap shield, so tapping it pauses or resumes instead of opening YouTube's channel or "more videos" links.
 - Portrait only.
 
-This repo is just the static page (`index.html`, `app.js`, `style.css`). There's no build step and no API key. The video lists come from [HarperTubeData](https://github.com/marler8997/HarperTubeData), which keeps them up to date and publishes them at <https://marler8997.github.io/HarperTubeData/>.
+This repo is just the static page (`index.html`, `app.js`, `style.css`). There's no build step and no API key. The video lists come from [harpertube/channels](https://github.com/harpertube/channels), which keeps them up to date and publishes them at <https://harpertube.github.io/channels/>. The Android app is [harpertube/android](https://github.com/harpertube/android).
 
-The channels Harper sees are the `CHANNELS` list in `app.js`. Each one must also be in HarperTubeData's `channels.json`.
+The channels Harper sees are the `CHANNELS` list in `app.js`. Each one must also be in the channels repo's `channels.json`.
 
 ## Publishing
 
-In *Settings → Pages*, deploy from the `master` branch, `/ (root)`. The app is at <https://marler8997.github.io/HarperTube/>.
+In *Settings → Pages*, deploy from the `master` branch, `/ (root)`. The app is at <https://harpertube.github.io/>.
 
 ## Testing locally
 
@@ -22,7 +22,7 @@ In *Settings → Pages*, deploy from the `master` branch, `/ (root)`. The app is
 python -m http.server 8000 --bind 0.0.0.0
 ```
 
-Then open <http://localhost:8000>, or `http://<this computer's IP>:8000` from the tablet. The page reads the live HarperTubeData by default.
+Then open <http://localhost:8000>, or `http://<this computer's IP>:8000` from the tablet. The page reads the live data from <https://harpertube.github.io/channels/> by default.
 
 To use other data, add `?data=URL`, for example `?data=testdata/` for a copy of a `data/` folder placed next to `index.html`.
 

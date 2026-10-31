@@ -24,16 +24,16 @@ function formatDuration(seconds) {
 
 // ---------- video data ----------
 //
-// The video data comes from the HarperTubeData repo; see the comment at the top
+// The video data comes from the harpertube/channels repo; see the comment at the top
 // of its build_data.py for the layout. Every file but index.json has a content
 // hash in its name, so the browser's HTTP cache handles "only download what changed".
 // Add ?data=URL to the page URL to load the data from somewhere else.
 const DATA_URL = (() => {
-  const url = new URLSearchParams(location.search).get("data") ?? "https://marler8997.github.io/HarperTubeData/";
+  const url = new URLSearchParams(location.search).get("data") ?? "https://harpertube.github.io/channels/";
   return url.endsWith("/") ? url : url + "/";
 })();
 
-// The channels Harper sees. Each must be in HarperTubeData's channels.json.
+// The channels Harper sees. Each must be in the channels repo's channels.json.
 const CHANNELS = [
   "@SuperSimpleSongs",
   "@KidsTV123",
@@ -66,7 +66,7 @@ async function loadChannels() {
   const index = await getJson("index.json", { cache: "no-cache" });
   channelQueues = await Promise.all(CHANNELS.map(async (handle) => {
     const entry = index.channels[handle];
-    if (!entry) throw new Error(`Channel ${handle} isn't in ${DATA_URL}index.json. Add it to HarperTubeData's channels.json.`);
+    if (!entry) throw new Error(`Channel ${handle} isn't in ${DATA_URL}index.json. Add it to the channels repo's channels.json.`);
     const manifest = await getJson(entry.manifest);
     return { dir: entry.manifest.slice(0, entry.manifest.lastIndexOf("/") + 1), batches: [...manifest.batches] };
   }));
