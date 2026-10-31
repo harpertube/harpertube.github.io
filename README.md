@@ -3,7 +3,7 @@
 A simple YouTube player for Harper:
 
 - A scrollable grid of videos from a fixed set of channels, newest first.
-- Tap a video to play it. A big yellow back button sits in the top-left corner, a large scrub bar sits under the video, and a strip of videos runs along the bottom.
+- Tap a video to play it. A back button (a faint white arrow in an outlined square) sits in the top-left corner, a large scrub bar sits under the video, and a strip of videos runs along the bottom.
 - Every tap shows a ripple, and buttons shrink when pressed.
 - The video is covered by a tap shield, so tapping it pauses or resumes instead of opening YouTube's channel or "more videos" links.
 - Portrait only.
