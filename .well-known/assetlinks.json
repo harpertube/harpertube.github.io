@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.marler8997.harpertube",
+      "sha256_cert_fingerprints": [
+        "52:E5:8A:09:02:20:31:7C:16:86:7F:62:34:F1:B1:0B:1D:5D:7F:E4:3F:7E:57:94:C1:77:69:E1:FB:6A:3C:0A"
+      ]
+    }
+  }
+]
