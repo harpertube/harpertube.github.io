@@ -211,11 +211,12 @@ async function playIndex(index) {
   }
   await ytReady;
   player = new YT.Player("player", {
-    // The privacy-enhanced domain doesn't get the browser's youtube.com sign-in
-    // cookies. When the browser is signed in to a supervised (Family Link)
-    // account, youtube.com refuses to play videos ("try watching this video in
-    // YouTube Kids").
-    host: "https://www.youtube-nocookie.com",
+    // youtube.com rather than the privacy-enhanced youtube-nocookie.com, so the
+    // player is signed in to the browser's account and YouTube Premium removes
+    // ads. A supervised (Family Link) account needs YouTube's supervised
+    // experience turned on in Family Link, or every video says "try watching
+    // this video in YouTube Kids".
+    host: "https://www.youtube.com",
     width: "100%",
     height: "100%",
     videoId: video.id,
