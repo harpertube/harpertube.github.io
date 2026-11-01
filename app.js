@@ -160,13 +160,11 @@ function wireInfiniteScroll() {
   }, { passive: true });
 }
 
-let toastTimer = 0;
+// Stays up until another video is played or the player is closed.
 function toast(message) {
   const el = $("toast");
   el.textContent = message;
   el.hidden = false;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.hidden = true; }, 3000);
 }
 
 function ripple(x, y) {
@@ -202,6 +200,7 @@ async function playIndex(index) {
   for (const [i, card] of stripCards.entries()) card.classList.toggle("current", i === index);
   stripCards[index].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   setShieldIcon(false);
+  $("toast").hidden = true;
   pendingSeek = null;
   setProgress(0, 0);
 
@@ -228,6 +227,7 @@ async function playIndex(index) {
 function closePlayer() {
   if (player) player.stopVideo();
   $("player-view").hidden = true;
+  $("toast").hidden = true;
 }
 
 function onStateChange(e) {
@@ -237,11 +237,22 @@ function onStateChange(e) {
   if (e.data === s.ENDED && AUTOPLAY_NEXT) playIndex((current + 1) % videos.length);
 }
 
+// The YouTube IFrame API's error codes. 101 and 150 are documented as the
+// owner not allowing embeds, but a video ID that doesn't exist also gets 150.
+const PLAYER_ERRORS = {
+  2: "invalid video ID",
+  5: "the player can't play this video",
+  100: "video removed or private",
+  101: "blocked here or unavailable",
+  150: "blocked here or unavailable",
+  153: "missing referrer",
+};
+
 function onError(e) {
   const video = videos[current];
   console.error(`YouTube player error ${e.data} for video ${video.id} (${video.title})`);
-  toast("That video won't play here");
-  setTimeout(() => playIndex((current + 1) % videos.length), 1500);
+  // Shown on screen because a tablet has no console to read the code from.
+  toast(`YouTube player error ${e.data}: ${PLAYER_ERRORS[e.data] || "unknown"}`);
 }
 
 function setShieldIcon(showPlay) {
